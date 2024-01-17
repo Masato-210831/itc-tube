@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import NippoModel
 from .forms import NippoFormClass
 
@@ -13,7 +13,7 @@ def nippoListView(request):
 def nippoDetailView(request, pk):
     template_name = "nippo/nippo-detail.html"
     ctx = {}
-    q = NippoModel.objects.get(pk=pk)
+    q = get_object_or_404(NippoModel ,pk=pk)
     ctx["object"] = q
     return render(request, template_name, ctx)
   
@@ -28,19 +28,35 @@ def nippoCreateView(request):
       content = form.cleaned_data["content"]
       obj = NippoModel(title=title, content=content)
       obj.save()
+      return redirect("nippo-list")
   return render(request, template_name, ctx)
 
 
 def nippoUpdateFormView(request, pk):
     template_name = "nippo/nippo-form.html"
-    obj = NippoModel.objects.get(pk=pk)
+    obj = get_object_or_404(NippoModel, pk=pk)
     initial_values = {"title": obj.title, "content":obj.content}
     form = NippoFormClass(request.POST or initial_values) # request.POSTは編集用, initial_valuesは初期用
     ctx = {"form": form}
+    ctx["object"] = obj
     if form.is_valid():
         title = form.cleaned_data["title"]
         content = form.cleaned_data["content"]
         obj.title = title
         obj.content = content
         obj.save()
+        if request.POST:
+          return redirect("nippo-list")
     return render(request, template_name, ctx)
+  
+  
+# 削除ページ
+def nippoDeleteView(request, pk):
+  template_name = "nippo/nippo-delete.html"
+  obj = get_object_or_404(NippoModel, pk=pk)
+  ctx = {"object" : obj}
+  if request.POST:
+    obj.delete()
+    return redirect("nippo-list")
+  return render(request, template_name, ctx)
+  

@@ -1,5 +1,13 @@
 {% extends "base.html" %}
-{% block title %}日報を作成しよう{% endblock %}
+{% block title %}
+
+{% comment %}  ページタイトルの分岐 {% endcomment %}
+{% if object %}
+日報「{{object.title}}の返照」
+{% else %}
+日報の新規作成
+{% endif %}
+{% endblock %}
 
 {% block content %}
     <form method="POST">{% csrf_token %}
