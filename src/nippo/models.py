@@ -6,5 +6,5 @@ class NippoModel(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-      return self.title + " : 日報アプリ"
+      return self.title
 

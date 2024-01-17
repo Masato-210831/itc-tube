@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}日報を作成しよう{% endblock %}
+
+{% block content %}
+    <form method="POST">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">送信</button>
+    </form>
+{% endblock %}
