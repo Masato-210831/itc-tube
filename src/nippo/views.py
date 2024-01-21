@@ -2,9 +2,11 @@ from typing import Any
 from django.db.models.base import Model as Model
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, FormView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import NippoModel
-from .forms import NippoFormClass
+from .forms import NippoModelForm, NippoFormClass
 from django.urls import reverse, reverse_lazy
+
 
 class NippoListView(ListView):
   template_name = "nippo/nippo-list.html"
@@ -28,6 +30,27 @@ class NippoDetailView(DetailView):
     def get_object(self):
        return super().get_object()
      
+     
+class NippoCreateModelFormView(CreateView):
+  template_name = "nippo/nippo-form.html"
+  form_class = NippoModelForm
+  success_url = reverse_lazy("nippo-list")
+  
+
+class NippoUpdateModelFormView(UpdateView):
+  template_name = "nippo/nippo-form.html"
+  model = NippoModel
+  form_class = NippoModelForm
+  success_url = reverse_lazy("nippo-list")
+
+
+class NippoDeleteView(DeleteView):
+  template_name = "nippo/nippo-delete.html"
+  model = NippoModel
+  success_url = reverse_lazy("nippo-list")
+  
+# --------------以下未使用------------------------
+
 class NippoCreateFormView(FormView):
     template_name = "nippo/nippo-form.html"
     form_class = NippoFormClass
