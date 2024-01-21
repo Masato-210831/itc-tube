@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'allauth',     
     'allauth.account',     
     'allauth.socialaccount',
+    "crispy_forms",
     #apps
     'nippo',
     'accounts',
@@ -151,3 +152,5 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # logout時の確認なし
 ACCOUNT_LOGOUT_ON_GET = True
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
