@@ -5,19 +5,10 @@ from django.views.generic import ListView, DetailView, FormView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import NippoModel
 from .forms import NippoModelForm, NippoFormClass
-from django.urls import reverse, reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
-
-class OwnerOnly(UserPassesTestMixin):
-  # アクセス制限を行う関数
-  def test_func(self):
-      nippo_instance = self.get_object()
-      return nippo_instance.user == self.request.user
-  
-  # Falseの時のリダイレクト先の指定
-  def handle_no_permission(self):
-      return redirect("nippo-detail", pk=self.kwargs["pk"])
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from utils.access_restrictions import OwnerOnly
 
 
 class NippoListView(ListView):
@@ -26,8 +17,13 @@ class NippoListView(ListView):
   
   # クエリセットをコンテキストで渡す
   def get_queryset(self):
-    qs = NippoModel.objects.all()
-    return qs
+      q = self.request.GET.get("search")
+      qs = NippoModel.objects.search(query=q)
+      if self.request.user.is_authenticated:
+          qs = qs.filter(Q(public=True)|Q(user=self.request.user))
+      else:
+          qs = qs.filter(public=True)
+      return qs
   
   # 好きなコンテキストが渡せる
   def get_context_data(self, *arg, **kwargs):
@@ -82,20 +78,20 @@ class NippoCreateFormView(FormView):
  # --------------以下未使用------------------------
     
      
-def nippoListView(request):
-    template_name = "nippo/nippo-list.html"
-    ctx = {}
-    qs = NippoModel.objects.all()
-    ctx["object_list"] = qs
-    return render(request, template_ntx) 
+# def nippoListView(request):
+#     template_name = "nippo/nippo-list.html"
+#     ctx = {}
+#     qs = NippoModel.objects.all()
+#     ctx["object_list"] = qs
+#     return render(request, template_ntx) 
   
 
-def nippoDetailView(request, pk):
-    template_name = "nippo/nippo-detail.html"
-    ctx = {}
-    q = get_object_or_404(NippoModel ,pk=pk)
-    ctx["object"] = q
-    return render(request, template_name, ctx)
+# def nippoDetailView(request, pk):
+#     template_name = "nippo/nippo-detail.html"
+#     ctx = {}
+#     q = get_object_or_404(NippoModel ,pk=pk)
+#     ctx["object"] = q
+#     return render(request, template_name, ctx)
   
   
 def nippoCreateView(request):

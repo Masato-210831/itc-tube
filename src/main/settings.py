@@ -143,6 +143,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # logout時のリダイレクト先
 from django.urls import reverse_lazy
+
+ACCOUNT_ADAPTER = "accounts.adapter.MyNippoAdapter"
 LOGIN_REDIRECT_URL = reverse_lazy('nippo-list')
 ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy("account_login")
 

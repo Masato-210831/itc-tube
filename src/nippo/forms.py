@@ -4,12 +4,15 @@ from .models import NippoModel
 class NippoModelForm(forms.ModelForm):
   class Meta:
     model = NippoModel
-    exclude = ['user']
+    exclude = ['user', 'slug']
     # fields = "__all__"
     
   def __init__(self, user=None, *args, **kwargs):
-    for field in self.base_fields.values():
-      field.widget.attrs['class'] = "form-control"
+    for key, field in self.base_fields.items():
+      if key != "public":
+          field.widget.attrs["class"] = "form-control"
+      else:
+          field.widget.attrs["class"] = "form-check-input"
       self.user = user
       super().__init__(*args, **kwargs)
   
