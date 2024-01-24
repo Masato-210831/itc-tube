@@ -9,6 +9,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from utils.access_restrictions import OwnerOnly
+from .filters import NippoModelFilter
+from accounts.models import Profile
 
 
 class NippoListView(ListView):
@@ -28,6 +30,11 @@ class NippoListView(ListView):
   # 好きなコンテキストが渡せる
   def get_context_data(self, *arg, **kwargs):
     ctx = super().get_context_data(*arg, **kwargs)
+    ctx["filter"] = NippoModelFilter(self.request.GET, queryset=self.get_queryset())
+    profile_id = self.request.GET.get("profile")
+    q = Profile.objects.filter(id=profile_id)
+    if q.exists():
+        ctx["profile"] = q.first()
     return ctx
 
 

@@ -13,6 +13,8 @@
 {% block content %}
 <div class="container my-3" style="max-width:700px;">
     <form method="POST"> {% csrf_token %}
+    {% bootstrap_javascript jquery='full' %}
+    {{form.media}}
     {{ form.as_p }}
     {% if object %}
         <button class="btn btn-primary form-control" type="submit">保存</button>

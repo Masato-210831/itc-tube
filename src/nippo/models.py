@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user, get_user_model
 from utils.random_string import random_string_generator
+from django.utils import timezone
 
 # userモデルを取得
 User = get_user_model()
@@ -27,7 +28,7 @@ class NippoModelQuerySet(models.QuerySet):
                 Q(content__icontains=query)            
             )
             qs = qs.filter(or_lookup).distinct()
-        return qs.order_by("-timestamp") #新しい順に並び替えてます
+        return qs.order_by("-date") #新しい順に並び替えてます
       
       
 class NippoModelManager(models.Manager):
@@ -43,6 +44,7 @@ class NippoModel(models.Model):
     title = models.CharField(max_length=100, verbose_name='タイトル')
     content = models.TextField(max_length=1000, verbose_name='内容')
     public = models.BooleanField(default=False, verbose_name="公開する")
+    date = models.DateField(default=timezone.now)
     slug = models.SlugField(max_length=20, default=slug_maker, unique=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     
@@ -50,8 +52,13 @@ class NippoModel(models.Model):
       verbose_name="日報"
       verbose_name_plural = "日報一覧"
     
-    objects = NippoModelManager()
+    objects = NippoModelManager() 
 
     def __str__(self):
       return self.title
+  
+    def get_profile_page_url(self):
+        from django.urls import reverse_lazy
+        return reverse_lazy("nippo-list") + f"?profile={self.user.profile.id}"
+
 

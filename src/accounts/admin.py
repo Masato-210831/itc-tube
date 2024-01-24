@@ -49,4 +49,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(User, UserAdmin)
 
 #各Userページと統合したのでコメントアウト
-# admin.site.register(Profile)
+admin.site.register(Profile)

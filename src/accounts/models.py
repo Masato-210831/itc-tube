@@ -87,6 +87,10 @@ class Profile(models.Model):
     def __str__(self):
         return self.username
     
+    def get_own_archive_url(self):
+        from django.urls import reverse_lazy
+        return reverse_lazy("nippo-list") + f"?profile={self.id}"
+    
 # シグナル → Userモデルセーブ後、Profileモデルに反映
 def post_user_created(sender, instance, created, **kwargs):
     if created:
