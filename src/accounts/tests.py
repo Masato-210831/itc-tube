@@ -80,3 +80,29 @@ class AccountsTestCase(TestCase):
         profile_obj = Profile.objects.first()
         self.assertEqual(profile_obj.user.email, profile_obj.username)
         
+from django.core import mail
+class EmailTestCase(TestCase):
+    def test_sed_email(self):
+        # メール送信
+        mail.send_mail(
+        '件名',
+        '本文',
+        'from@example.com',
+        ['to@example.com'],
+        fail_silently=False,
+        )
+        
+        # 送信されたメールが1件であることを確認する
+        self.assertEqual(len(mail.outbox), 1)
+
+        # 送信されたメールの件名を確認する
+        self.assertEqual(mail.outbox[0].subject, '件名')
+
+        # 送信されたメールの本文を確認する
+        self.assertEqual(mail.outbox[0].body, '本文')
+
+        # 送信されたメールの送信元アドレスを確認する
+        self.assertEqual(mail.outbox[0].from_email, 'from@example.com')
+
+        # 送信されたメールの宛先アドレスを確認する
+        self.assertEqual(mail.outbox[0].to, ['to@example.com'])
